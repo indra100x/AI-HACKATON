@@ -41,7 +41,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
 
         $user = User::create([
@@ -54,7 +54,7 @@ class AuthController extends Controller
         $token = ($user instanceof User) ? $user->createToken('auth_token')->plainTextToken : null;
 
         return response()->json([
-            'message' => 'Registration successful',
+            'message' => 'success',
             'token' => $token,
             'user' => $user,
             'redirectUrl' => '/dashboard',

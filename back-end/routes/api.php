@@ -17,4 +17,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/documents/{document}/decision', [DocumentController::class, 'getDecision']);
     Route::post('/documents/{document}/feedback', [FeedbackController::class, 'submitFeedback']);
 });
-
