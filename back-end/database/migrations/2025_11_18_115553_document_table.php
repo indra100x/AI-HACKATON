@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('name');
             $table->string('path');
-            $table->enum('decision',['fake','real']);
+            $table->enum('decision',['fake','real'])->nullable();
             $table->enum('extension',['pdf','docx','jpg','jpeg','png','mp4']);
             $table->timestamps();
         });

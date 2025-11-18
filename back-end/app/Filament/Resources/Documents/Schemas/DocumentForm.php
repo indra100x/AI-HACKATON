@@ -19,11 +19,20 @@ class DocumentForm
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Document Name'),
+                    ->label('Document Name')
+                    ->afterStateUpdated(function ($state, $set) {
+                        // Auto-generate path from name (without DOCS prefix, that's added on create)
+                        if ($state) {
+                            $set('path', str_replace(' ', '-', strtolower($state)));
+                        }
+                    }),
                 TextInput::make('path')
                     ->required()
                     ->maxLength(255)
-                    ->label('Document Path'),
+                    ->label('Document Path')
+                    ->helperText('Will be saved as DOCS/{path}/filename')
+                    ->disabled()
+                    ->dehydrated(),
                 Select::make('decision')
                     ->options([
                         'fake' => 'Fake',
