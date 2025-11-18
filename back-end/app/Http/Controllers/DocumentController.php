@@ -12,7 +12,7 @@ class DocumentController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:pdf,docx,doc,jpg,jpeg,png,mp4',
+            'file' => 'required|image|video',
         ]);
 
         $user = $request->user();
