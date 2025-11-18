@@ -12,6 +12,41 @@ const Home = () => {
     const [attachment, setAttachment] = useState({})
     const [pull, setPull] = useState(false)
     const [upload, setUpload] = useState(false)
+    const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+            toast.error('No token found');
+            setIsLoggingOut(false);
+            return;
+        }
+
+        try {
+            const res = await fetch(`${import.meta.env.VITE_APP_API}api/auth/logout`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (res.ok) {
+                localStorage.removeItem('token');
+                toast.success('Logged out successfully');
+                navigate('/login');
+            } else {
+                const data = await res.json();
+                toast.error(data.message || 'Logout failed');
+                setIsLoggingOut(false);
+            }
+        } catch (err) {
+            console.error('Logout error:', err);
+            toast.error('Logout error: ' + (err.message || err));
+            setIsLoggingOut(false);
+        }
+    }
     const handleUpload = () =>{
         setUpload(true)
         
@@ -95,6 +130,16 @@ const Home = () => {
   console.log(attachment)
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-blue-100 p-4">
+            <div className="absolute top-5 right-5">
+                <button 
+                    type="button" 
+                    onClick={handleLogout} 
+                    disabled={isLoggingOut}
+                    className="px-4 py-2 rounded-lg bg-red-500 text-white hover:opacity-80 cursor-pointer disabled:opacity-50"
+                >
+                    {isLoggingOut ? "logging out..." : "logout"}
+                </button>
+            </div>
             <div className="bg-white w-[90%] min-h-96 rounded-4xl p-10">
                 <h1 className="font-bold">UPLOAD FILES</h1>
                 {!pull && (

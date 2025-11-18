@@ -19,11 +19,17 @@ const Login = () => {
             },
             body: JSON.stringify(user),
         }).then(res => res.json()).then(data => {
-            if (data.message == "success") {
+            console.log('Login response:', data);
+            if (data.message === "Login successful" || data.message === "success") {
                 localStorage.setItem("token",data.token)
-                return navigate("/")
+                if (data.redirectUrl === '/admin') {
+                    const backendUrl = import.meta.env.VITE_APP_API.replace(/\/$/, '');
+                    window.location.href = `${backendUrl}/admin`;
+                } else {
+                    return navigate("/")
+                }
               }else{
-                toast(data)
+                toast.error(data.message || 'Login failed')
                 setLoading(false)
               }
         })
