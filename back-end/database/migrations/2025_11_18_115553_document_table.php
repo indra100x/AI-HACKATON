@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('document', function (Blueprint $table){
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('name');
             $table->string('path');
             $table->enum('decision',['fake','real']);
             $table->enum('extension',['pdf','docx','jpg','jpeg','png','mp4']);
+            $table->timestamps();
         });
     }
 

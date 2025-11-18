@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
-    protected $table = 'documents';
-    protected $fillable=['extension','decision'];
+    protected $table = 'document';
+    protected $fillable=['user_id','name','path','extension','decision'];
 
 
     public function user(){
