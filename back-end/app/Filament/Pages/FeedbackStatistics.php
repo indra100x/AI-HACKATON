@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\ApprovedFeedbackChart;
+use App\Filament\Widgets\RequestsPerDayChart;
 use App\Models\Feedback;
 use Filament\Pages\Page;
 
@@ -27,5 +29,18 @@ class FeedbackStatistics extends Page
             'negative' => $negative,
             'total' => $positive + $negative,
         ];
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            ApprovedFeedbackChart::class,
+            RequestsPerDayChart::class,
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return 2;
     }
 }

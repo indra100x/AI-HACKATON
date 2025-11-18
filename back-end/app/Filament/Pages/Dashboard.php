@@ -16,4 +16,14 @@ class Dashboard extends Page
     {
         return 'Dashboard';
     }
+
+    public function getWidgets(): array
+    {
+        return [];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return 2;
+    }
 }

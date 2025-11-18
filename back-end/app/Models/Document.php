@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
-    protected $table = 'document';
+    protected $table = 'documents';
     protected $fillable=['user_id','name','path','extension','decision'];
 
 

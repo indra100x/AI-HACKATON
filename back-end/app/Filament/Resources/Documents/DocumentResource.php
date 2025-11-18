@@ -8,7 +8,6 @@ use App\Filament\Resources\Documents\Pages\ListDocuments;
 use App\Filament\Resources\Documents\Schemas\DocumentForm;
 use App\Filament\Resources\Documents\Tables\DocumentsTable;
 use App\Models\Document;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -27,13 +26,9 @@ class DocumentResource extends Resource
      * @return Schema
      * @noinspection PhpIncompatibleReturnTypeInspection
      */
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                // This will be configured by DocumentForm if using the Schema pattern
-                // For now, return empty form to satisfy the type signature
-            ]);
+        return DocumentForm::configure($schema);
     }
 
     /**
