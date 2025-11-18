@@ -8,6 +8,10 @@ use Filament\Schemas\Schema;
 
 class DocumentForm
 {
+    /**
+     * @param Schema $schema
+     * @return Schema
+     */
     public static function configure(Schema $schema): Schema
     {
         return $schema
