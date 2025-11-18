@@ -12,30 +12,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-/**
- * @mixin \Filament\Resources\Resource
- */
 class DocumentResource extends Resource
 {
     protected static ?string $model = Document::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    /**
-     * @param Schema $schema
-     * @return Schema
-     * @noinspection PhpIncompatibleReturnTypeInspection
-     */
     public static function form(Schema $schema): Schema
     {
         return DocumentForm::configure($schema);
     }
 
-    /**
-     * @param Table $table
-     * @return Table
-     * @noinspection PhpIncompatibleReturnTypeInspection
-     */
     public static function table(Table $table): Table
     {
         return DocumentsTable::configure($table);
@@ -43,9 +30,7 @@ class DocumentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

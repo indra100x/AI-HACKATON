@@ -32,7 +32,6 @@ class ApprovedFeedbackChart extends LineChartWidget
             ->orderBy('date', 'asc')
             ->pluck('count', 'date');
 
-        // Get all dates
         $allDates = collect($positiveData->keys())->merge($negativeData->keys())->unique()->sort();
 
         $labels = $allDates->map(fn($date) => date('M d', strtotime($date)))->toArray();

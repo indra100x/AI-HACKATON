@@ -22,11 +22,9 @@ class AuthController extends Controller
             ], 401);
         }
 
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Determine redirect URL based on role
         $redirectUrl = $user->role === 'admin' ? '/admin' : '/dashboard';
 
         return response()->json([

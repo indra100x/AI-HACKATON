@@ -8,10 +8,6 @@ use Filament\Schemas\Schema;
 
 class DocumentForm
 {
-    /**
-     * @param Schema $schema
-     * @return Schema
-     */
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -21,7 +17,6 @@ class DocumentForm
                     ->maxLength(255)
                     ->label('Document Name')
                     ->afterStateUpdated(function ($state, $set) {
-                        // Auto-generate path from name (without DOCS prefix, that's added on create)
                         if ($state) {
                             $set('path', str_replace(' ', '-', strtolower($state)));
                         }

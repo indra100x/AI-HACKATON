@@ -7,16 +7,11 @@ use Illuminate\Support\Facades\Storage;
 
 class DocumentProcessingService
 {
-    /**
-     * Process uploaded document
-     */
     public static function processDocument(Document $document)
     {
         try {
-            // Get the file path
             $filePath = Storage::disk('public')->path($document->path);
 
-            // Process based on file type
             $extension = strtolower($document->extension);
 
             switch ($extension) {
@@ -39,13 +34,8 @@ class DocumentProcessingService
         }
     }
 
-    /**
-     * Process PDF file
-     */
     private static function processPdf($filePath, Document $document)
     {
-        // TODO: Implement PDF processing logic
-        // This could use libraries like TCPDF, mPDF, or external APIs
         return [
             'status' => 'processed',
             'type' => 'pdf',
@@ -54,13 +44,8 @@ class DocumentProcessingService
         ];
     }
 
-    /**
-     * Process Word document
-     */
     private static function processWord($filePath, Document $document)
     {
-        // TODO: Implement Word document processing logic
-        // This could use libraries like PhpWord
         return [
             'status' => 'processed',
             'type' => 'word',
@@ -69,13 +54,8 @@ class DocumentProcessingService
         ];
     }
 
-    /**
-     * Process Image file
-     */
     private static function processImage($filePath, Document $document)
     {
-        // TODO: Implement Image processing logic
-        // This could use libraries like Intervention/Image or GD
         return [
             'status' => 'processed',
             'type' => 'image',
@@ -84,13 +64,8 @@ class DocumentProcessingService
         ];
     }
 
-    /**
-     * Process Video file
-     */
     private static function processVideo($filePath, Document $document)
     {
-        // TODO: Implement Video processing logic
-        // This could use FFmpeg or similar tools
         return [
             'status' => 'processed',
             'type' => 'video',
