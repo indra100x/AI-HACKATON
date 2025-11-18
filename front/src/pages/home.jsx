@@ -104,7 +104,7 @@ const Home = () => {
                     onChange={handleFileUpload}
                     className="hidden"
                     id="file-upload"
-                    accept="image/*,video/*,.pdf,.doc,.docx"
+                    accept="image/*,video/*"
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
                     <div className="text-gray-500 mb-2">
