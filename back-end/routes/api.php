@@ -14,6 +14,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'user']);
 
     Route::post('/documents/upload', [DocumentController::class, 'upload']);
+    Route::post('/documents/analyze', [DocumentController::class, 'analyze']);
     Route::get('/documents/{document}/decision', [DocumentController::class, 'getDecision']);
     Route::post('/documents/{document}/feedback', [FeedbackController::class, 'submitFeedback']);
 });

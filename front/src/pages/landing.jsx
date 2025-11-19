@@ -1,4 +1,4 @@
-import {React, useState} from "react";
+import React, { useState } from "react";
 import { 
     X, Phone, Mail, MoveLeft, Menu, 
     Users, MessageCircle, Search, Crown, 
@@ -13,6 +13,7 @@ import { faAndroid, faLinux,faWindows } from "@fortawesome/free-brands-svg-icons
 import { useNavigate } from "react-router-dom";
 const Landing = () => {
     const navigate = useNavigate()
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const [isOpen, setIsOpen] = useState(false);
   
     const handleToggle = () => {
@@ -62,7 +63,7 @@ const Landing = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex justify-between items-center">
                     <div className="w-20 cursor-pointer">
-                        <p onClick={() => navigate("/")}>logo</p>    
+                        <p onClick={() => navigate(token ? '/app' : '/')}>logo</p>
                     </div>
 
                     {/* Desktop Menu */}
@@ -73,7 +74,7 @@ const Landing = () => {
                             <a href="#features" className="text-gray-600 hover:text-blue-600 px-3 py-2">features</a>
                             <a href="#ranks" className="text-gray-600 hover:text-blue-600 px-3 py-2">download</a>
                             <button 
-                            onClick={() => navigate('/register')}
+                            onClick={() => navigate(token ? '/app' : '/register')}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                             >
                             join us
@@ -99,7 +100,7 @@ const Landing = () => {
                     <a href="#features" className="block px-3 py-2 hover:text-blue-600 text-gray-600">features</a>
                     <a href="#ranks" className="block px-3 py-2 hover:text-blue-600 text-gray-600">download</a>
                     <button 
-                        onClick={() => navigate('/register')}
+                        onClick={() => navigate(token ? '/app' : '/register')}
                         className="w-full text-left px-3 py-2 bg-blue-600 text-white rounded-lg"
                     >
                         join us
@@ -123,7 +124,7 @@ const Landing = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <button 
-                        onClick={() => navigate('/register')}
+                        onClick={() => navigate(token ? '/app' : '/register')}
                         className="bg-gradient-to-r to350% from-cyan-600 to-blue-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-cyan-700 hover:to-blue-700 transform hover:scale-105 transition-all flex items-center gap-2"
                     >
                         <Crown className="w-5 h-5" />
@@ -131,7 +132,7 @@ const Landing = () => {
                         <ArrowRight className="w-5 h-5" />
                     </button>
                     <button 
-                        onClick={() => navigate('/login')}
+                        onClick={() => navigate(token ? '/app' : '/login')}
                         className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-blue-600 hover:text-white transition-all"
                     >
                         LOGIN

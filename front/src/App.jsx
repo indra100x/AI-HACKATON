@@ -17,10 +17,14 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<ProtectedRoute><Home/></ProtectedRoute>}/>
-          <Route path='/landing' element={<ProtectedLogin><Landing/></ProtectedLogin>}/>
-          <Route path='/register' element={<ProtectedLogin><Register/></ProtectedLogin>}/>
-          <Route path='/login' element={<ProtectedLogin><Login/></ProtectedLogin>}/>
+          {/* Public landing at root */}
+          <Route path='/' element={<Landing/>} />
+          {/* Keep explicit landing/login/register protected for auth flow */}
+          <Route path='/landing' element={<Landing/>} />
+          <Route path='/register' element={<ProtectedLogin><Register/></ProtectedLogin>} />
+          <Route path='/login' element={<ProtectedLogin><Login/></ProtectedLogin>} />
+          {/* Authenticated app under /app */}
+          <Route path='/app' element={<ProtectedRoute><Home/></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

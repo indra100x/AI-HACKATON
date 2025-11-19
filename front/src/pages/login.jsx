@@ -1,6 +1,7 @@
 import {React, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from '../AuthContext';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -9,30 +10,28 @@ const Login = () => {
         email: "",
         password: "",
     })
-    const login = () =>{
+    const auth = useAuth();
+    const login = async () =>{
         setLoading(true)
-        fetch(`${import.meta.env.VITE_APP_API}api/auth/login`,{
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            },
-            body: JSON.stringify(user),
-        }).then(res => res.json()).then(data => {
-            console.log('Login response:', data);
-            if (data.message === "Login successful" || data.message === "success") {
-                localStorage.setItem("token",data.token)
+        try {
+            const res = await auth.login(user);
+            if (res.ok) {
+                const data = res.data;
+                const apiBase = import.meta.env.VITE_APP_API.replace(/\/$/, '');
                 if (data.redirectUrl === '/admin') {
-                    const backendUrl = import.meta.env.VITE_APP_API.replace(/\/$/, '');
-                    window.location.href = `${backendUrl}/admin`;
-                } else {
-                    return navigate("/")
+                    window.location.href = `${apiBase}/admin`;
+                    return;
                 }
-              }else{
-                toast.error(data.message || 'Login failed')
-                setLoading(false)
-              }
-        })
+                navigate('/app');
+                return;
+            }
+            toast.error((res.data && res.data.message) || 'Login failed');
+        } catch (err) {
+            console.error('Login error:', err);
+            toast.error('Login error: ' + (err.message || err));
+        } finally {
+            setLoading(false);
+        }
     }
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-blue-100 p-4">
@@ -62,7 +61,7 @@ const Login = () => {
                     />
                 </div>
                 <button
-                    type="submit"
+                    type="button"
                     className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition"
                     onClick={login}
                     disabled={loading}

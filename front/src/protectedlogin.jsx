@@ -1,11 +1,14 @@
 import React from 'react';
 import { Navigate,useLocation } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const ProtectedLogin = ({ children }) => {
-  const token = localStorage.getItem('token');
+  const { user, loading } = useAuth();
   const navigate = useLocation();
-  if (token != null) {
-    return <Navigate to="/" state={{ from: navigate }} replace />;
+
+  if (loading) return null; // or spinner
+  if (user) {
+    return <Navigate to="/app" state={{ from: navigate }} replace />;
   }
 
   return children;

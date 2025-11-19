@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class FeedbackController extends Controller
 {
@@ -38,6 +40,24 @@ class FeedbackController extends Controller
             'rating' => $request->input('rating'),
             'approved' => false,
         ]);
+
+        // Forward feedback to FastAPI feedback endpoint (attach stored file)
+        try {
+            $fastapiUrl = env('FASTAPI_URL', 'http://127.0.0.1:8001');
+            $filePath = Storage::disk('public')->path($document->path);
+
+            if (file_exists($filePath)) {
+                // Map rating back to FASTAPI expected user_feedback
+                $userFeedback = $request->input('rating') === 'positive' ? 'REAL' : 'FAKE';
+
+                Http::attach('file', fopen($filePath, 'r'), $document->name)
+                    ->post(rtrim($fastapiUrl, '/') . '/feedback', [
+                        'user_feedback' => $userFeedback,
+                    ]);
+            }
+        } catch (\Exception $e) {
+            // swallow errors; could log
+        }
 
         return response()->json([
             'success' => true,

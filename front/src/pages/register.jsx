@@ -1,6 +1,7 @@
 import {React,useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from '../AuthContext';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -10,25 +11,22 @@ const Register = () => {
       email: "",
       password: "",
     })
-    const reg = () =>{
+    const auth = useAuth();
+    const reg = async () =>{
         setLoading(true)
-        fetch(`${import.meta.env.VITE_APP_API}api/auth/register`,{
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(user),
-        }).then(res => res.json()).then(data => {
-            if (data.message == "success") {
-                localStorage.setItem("token",data.token)
-                return navigate("/")
-                console.log(data);
-              }else{
-                toast(data)
-                setLoading(false)
-              }
-        })
+        try {
+            const res = await auth.register(user);
+            if (res.ok) {
+                navigate('/app');
+                return;
+            }
+            toast.error((res.data && res.data.message) || 'Registration failed');
+        } catch (err) {
+            console.error('Register error:', err);
+            toast.error('Register error: ' + (err.message || err));
+        } finally {
+            setLoading(false);
+        }
     }
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-blue-100 p-4">
@@ -68,12 +66,12 @@ const Register = () => {
                     />
                 </div>
                 <button
-                    type="submit"
+                    type="button"
                     className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition"
                     onClick={reg}
                     disabled={loading}
                 >
-                    {loading ? "registring" : "register"}
+                    {loading ? "registering..." : "register"}
                 </button>
                 <p className="text-center text-sm text-gray-600 mt-4">
                 already have account ?{" "}
