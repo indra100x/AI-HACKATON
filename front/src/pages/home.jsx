@@ -84,53 +84,53 @@ const Home = () => {
 
     // Step 2: after user chooses feedback, send rating to Laravel feedback endpoint (no file upload)
     const handleSendToLaravel = async (userFeedback) => {
-        if (!decisionResult || !decisionResult.document) return;
-        setSendingToServer(true);
+    if (!decisionResult || !decisionResult.document) return;
+    setSendingToServer(true);
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-            toast.error('Please login first');
+    const token = localStorage.getItem('token');
+    if (!token) {
+        toast.error('Please login first');
+        setSendingToServer(false);
+        return;
+    }
+
+    const rating = userFeedback === decisionResult.prediction_label ? "positive" : "negative";
+
+    const feedbackUrl = `${import.meta.env.VITE_APP_API.replace(/\/$/, '')}/api/documents/${decisionResult.document.id}/feedback`;
+
+    try {
+        const res = await fetch(feedbackUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rating }),
+        });
+
+        const contentType = res.headers.get('content-type') || '';
+        const body = contentType.includes('application/json') ? await res.json() : { message: await res.text() };
+
+        if (!res.ok) {
+            toast.error((body && body.message) || (body && body.detail) || 'Submitting feedback failed');
             setSendingToServer(false);
             return;
         }
 
-        // Map REAL/FAKE -> positive/negative
-        const rating = userFeedback === 'REAL' ? 'positive' : 'negative';
+        toast.success('Feedback submitted successfully');
+        setAttachment({});
+        setPull(false);
+        setDecisionResult(null);
+        setSendingToServer(false);
+        setTimeout(() => navigate('/'), 800);
 
-        const feedbackUrl = `${import.meta.env.VITE_APP_API.replace(/\/$/, '')}/api/documents/${decisionResult.document.id}/feedback`;
-
-        try {
-            const res = await fetch(feedbackUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ rating }),
-            });
-
-            const contentType = res.headers.get('content-type') || '';
-            const body = contentType.includes('application/json') ? await res.json() : { message: await res.text() };
-
-            if (!res.ok) {
-                toast.error((body && body.message) || (body && body.detail) || 'Submitting feedback failed');
-                setSendingToServer(false);
-                return;
-            }
-
-            toast.success('Feedback submitted successfully');
-            setAttachment({});
-            setPull(false);
-            setDecisionResult(null);
-            setSendingToServer(false);
-            setTimeout(() => navigate('/'), 800);
-
-        } catch (err) {
-            console.error('Feedback submit error:', err);
-            toast.error('Feedback submit error: ' + (err.message || err));
-            setSendingToServer(false);
-        }
+    } catch (err) {
+        toast.error('Feedback submit error: ' + (err.message || err));
+        setSendingToServer(false);
     }
+};
+
+
     const remove  = () => {
         setPull(false)
         setAttachment({})
@@ -199,22 +199,57 @@ const Home = () => {
                     </div>
 
                     {decisionResult && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="bg-white p-6 rounded-lg w-[90%] max-w-md">
-                                <h2 className="font-bold mb-2">Model Decision</h2>
-                                <p className="mb-4">Prediction: <strong>{decisionResult.prediction_label}</strong></p>
-                                {decisionResult.prediction && decisionResult.prediction.confidence && (
-                                    <p className="mb-4">Confidence: {(decisionResult.prediction.confidence * 100).toFixed(2)}%</p>
-                                )}
-                                <p className="mb-4 text-sm text-gray-600">If the prediction is incorrect, please choose the correct label to help improve the model.</p>
-                                <div className="flex justify-between">
-                                    <button onClick={() => handleSendToLaravel('REAL')} disabled={sendingToServer} className="px-4 py-2 rounded bg-green-500 text-white">REAL</button>
-                                    <button onClick={() => handleSendToLaravel('FAKE')} disabled={sendingToServer} className="px-4 py-2 rounded bg-red-500 text-white">FAKE</button>
-                                    <button onClick={() => { setDecisionResult(null); setUpload(false); }} disabled={sendingToServer} className="px-4 py-2 rounded bg-gray-300">Cancel</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-white p-6 rounded-lg w-[90%] max-w-md">
+            <h2 className="font-bold mb-2">Model Decision</h2>
+
+            <p className="mb-4">
+                Prediction: <strong>{decisionResult.prediction_label}</strong>
+            </p>
+
+            <p className="mb-4">
+                Message: <strong>{decisionResult.prediction.message}</strong>
+            </p>
+
+            {decisionResult?.prediction?.confidence !== undefined && (
+                <p className="mb-4">
+                    Confidence: {(decisionResult.prediction.confidence * 100).toFixed(2)}%
+                </p>
+            )}
+
+            <p className="mb-4 text-sm text-gray-600">
+                If the prediction is incorrect, please choose the correct label to help improve the model.
+            </p>
+            
+
+            <div className="flex justify-between">
+                <button 
+                    onClick={() => handleSendToLaravel('REAL')} 
+                    disabled={sendingToServer} 
+                    className="px-4 py-2 rounded bg-green-500 text-white"
+                >
+                    REAL
+                </button>
+
+                <button 
+                    onClick={() => handleSendToLaravel('FAKE')} 
+                    disabled={sendingToServer} 
+                    className="px-4 py-2 rounded bg-red-500 text-white"
+                >
+                    FAKE
+                </button>
+
+                <button 
+                    onClick={() => { setDecisionResult(null); setUpload(false); }} 
+                    disabled={sendingToServer} 
+                    className="px-4 py-2 rounded bg-gray-300"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+)}
                     
                     </>
                 )}

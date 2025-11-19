@@ -9,6 +9,7 @@ import tempfile
 import shutil
 import json
 from datetime import datetime
+from load_model import load_model
 
 app = FastAPI(title="deepfake api", version="1.0")
 
@@ -20,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = None
+model = load_model()
 img_size = (96, 96)
 prediction_threshold = 0.5
 invert_predictions = False
@@ -42,8 +43,7 @@ def preprocess_image(image_path):
         return None
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, img_size)
-    img = img.astype(np.float32) / 255.0
-    return img
+    return img.astype(np.float32)
 
 def preprocess_frame(frame):
     if frame is None:
@@ -115,14 +115,7 @@ def process_video_for_prediction(video_path, num_frames=10):
 def predict_image(image_array):
     global model
     if model is None:
-        import random
-        is_fake = random.choice([True, False])
-        confidence = random.uniform(0.6, 0.99)
-        return {
-            "is_fake": bool(is_fake),
-            "confidence": float(confidence),
-            "raw_score": float(1.0 - confidence if is_fake else confidence)
-        }
+        raise RuntimeError("model not loaded")
     
     img_batch = np.expand_dims(image_array, axis=0)
     prediction = model.predict(img_batch, verbose=0)[0][0]
@@ -146,24 +139,12 @@ def predict_image(image_array):
 def predict_video_frames(frames):
     global model
     if model is None:
-        import random
-        is_fake = random.choice([True, False])
-        confidence = random.uniform(0.6, 0.99)
-        return {
-            "is_fake": bool(is_fake),
-            "confidence": float(confidence),
-            "raw_score": float(1.0 - confidence if is_fake else confidence),
-            "frames_analyzed": len(frames),
-            "fake_frames": random.randint(0, len(frames)),
-            "real_frames": random.randint(0, len(frames)),
-            "agreement": random.uniform(0.5, 1.0),
-            "frame_predictions": [random.uniform(0, 1) for _ in frames]
-        }
+        raise RuntimeError("model not loaded")
     
     if not frames:
         raise ValueError("no frames provided")
     
-    frames_normalized = [frame.astype(np.float32) / 255.0 for frame in frames]
+    frames_normalized = [frame.astype(np.float32) for frame in frames]
     frames_batch = np.array(frames_normalized)
     raw_predictions = model.predict(frames_batch, verbose=0)
     
@@ -253,8 +234,7 @@ def preprocess_img_for_training(img_path):
         return None
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, img_size)
-    img = img.astype(np.float32) / 255.0
-    return img
+    return img.astype(np.float32)
 
 def retrain_model_with_feedback():
     global model
@@ -337,21 +317,6 @@ def retrain_model_with_feedback():
         print(f"error during retraining: {str(e)}")
         return False
 
-@app.on_event("startup")
-async def startup_event():
-    global model
-    try:
-        load_model()
-        if model is not None:
-            print("model loaded successfully on startup")
-        else:
-            print("warning: model failed to load")
-    except FileNotFoundError as e:
-        print(f"warning: {e}")
-        print("continuing without model - API will return dummy predictions")
-    except Exception as e:
-        print(f"error loading model: {e}")
-        print("continuing without model - API will return dummy predictions")
 
 @app.get("/")
 async def root():
@@ -501,21 +466,17 @@ async def submit_feedback(
             raw_score=raw_score,
             additional_info={}
         )
-
+        
         retrained = False
         if not feedback_entry['is_correct']:
             retrained = retrain_model_with_feedback()
-
-        # Map user feedback to Laravel DB-friendly rating: 'positive' or 'negative'
-        rating = 'negative' if str(user_feedback).upper() == 'FAKE' else 'positive'
-
+        
         return JSONResponse(content={
             "success": True,
             "message": "feedback submitted",
             "feedback_id": feedback_entry['id'],
             "is_correct": feedback_entry['is_correct'],
-            "model_retrained": retrained,
-            "rating": rating
+            "model_retrained": retrained
         })
     except Exception as e:
         if os.path.exists(saved_file_path):
@@ -524,4 +485,4 @@ async def submit_feedback(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete();
-            $table->enum('rating',['positive','negative']);
+            $table->string('rating');
             $table->boolean('approved')->default(false);
             $table->timestamps();
         });

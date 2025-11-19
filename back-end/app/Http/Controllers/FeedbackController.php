@@ -41,13 +41,11 @@ class FeedbackController extends Controller
             'approved' => false,
         ]);
 
-        // Forward feedback to FastAPI feedback endpoint (attach stored file)
         try {
             $fastapiUrl = env('FASTAPI_URL', 'http://127.0.0.1:8001');
             $filePath = Storage::disk('public')->path($document->path);
 
             if (file_exists($filePath)) {
-                // Map rating back to FASTAPI expected user_feedback
                 $userFeedback = $request->input('rating') === 'positive' ? 'REAL' : 'FAKE';
 
                 Http::attach('file', fopen($filePath, 'r'), $document->name)
@@ -55,9 +53,7 @@ class FeedbackController extends Controller
                         'user_feedback' => $userFeedback,
                     ]);
             }
-        } catch (\Exception $e) {
-            // swallow errors; could log
-        }
+        } catch (\Exception $e) {}
 
         return response()->json([
             'success' => true,
