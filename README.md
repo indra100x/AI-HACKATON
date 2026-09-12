@@ -1,64 +1,89 @@
-# AI-HACKATON 🚀
+# AI-HACKATON: Fake Detector 🔍
 
-A full-stack AI application developed for a hackathon, combining a Python-based backend with modern frontend technologies to create an intelligent solution.
+An intelligent fake detection system built using fine-tuned AI models. This full-stack application combines machine learning with a modern web interface to identify and classify fake content across various media types.
 
 ## 📋 Project Overview
 
-**AI-HACKATON** is a hackathon submission that demonstrates the integration of AI/ML capabilities with a complete web application stack. The project is organized into three main components:
+**AI-HACKATON Fake Detector** is a hackathon submission that leverages fine-tuned deep learning models to detect fake content. The system is designed to analyze input data and determine authenticity with high accuracy. This project demonstrates the complete pipeline from model fine-tuning to production deployment.
 
-- **Backend** - Python-powered API and machine learning models
-- **Frontend** - React + Vite interface for user interaction
-- **Model** - AI/Machine Learning components
+### Key Features
+- 🤖 Fine-tuned AI models for fake content detection
+- 🎯 High accuracy classification
+- 💻 User-friendly web interface
+- ⚡ Fast inference and results
+- 🔄 Real-time analysis
+- 📊 Detailed reports and confidence scores
 
 ## 🏗️ Project Structure
 
 ```
 AI-HACKATON/
-├── back-end/           # Backend API and services
+├── back-end/           # Python backend API and fine-tuned models
+│   ├── models/         # Fine-tuned model files
+│   ├── api/            # RESTful API endpoints
 │   └── README.md       # Backend documentation
-├── front/              # Frontend application
+├── front/              # React + Vite frontend interface
+│   ├── src/            # React components
+│   ├── public/         # Static assets
 │   └── README.md       # Frontend documentation
-├── model/              # ML models and algorithms
+├── model/              # ML model training and fine-tuning
+│   ├── train/          # Training scripts
+│   ├── data/           # Training datasets
+│   └── checkpoints/    # Fine-tuned model weights
 └── README.md           # This file
 ```
 
 ### Backend (back-end/)
-- Built with Python
-- RESTful API implementation
-- Integration with Laravel framework
-- API endpoints for model inference and data management
-- Database connectivity and session management
+- Python-based RESTful API
+- Model inference engine
+- Fine-tuned model loading and management
+- Request processing and response generation
+- Integration with pre-trained and fine-tuned models
 
 ### Frontend (front/)
-- React-based UI built with Vite
-- Fast development and build experience with HMR (Hot Module Replacement)
-- Modern JavaScript framework
-- Responsive user interface for interacting with AI features
+- React-based user interface
+- Vite for fast development and builds
+- File upload functionality
+- Real-time result display
+- Confidence score visualization
+- Responsive design
 
 ### Machine Learning (model/)
-- Python-based ML models
-- Model training and inference
-- Data processing pipelines
-- Integration with backend API
+- Model fine-tuning scripts
+- Training dataset management
+- Transfer learning implementation
+- Model evaluation and testing
+- Checkpoint management
+- Performance metrics
 
 ## 🛠️ Technology Stack
 
 ### Languages
-- **Python** - 100% of the codebase (backend, models, and utilities)
+- **Python** - 100% of the codebase (backend, models, fine-tuning)
+
+### Backend
+- **Python** - Core language
+- **FastAPI / Flask** - Web framework
+- **PyTorch / TensorFlow** - Deep learning framework
+- **Transformers** - Pre-trained model library (for fine-tuning)
+- **SQLAlchemy** - Database ORM
 
 ### Frontend
 - **React** - UI framework
 - **Vite** - Build tool and dev server
 - **JavaScript/TypeScript** - Frontend scripting
-
-### Backend
-- **Python** - Core language
-- **Laravel** - Web framework
-- **RESTful APIs** - Communication protocol
+- **Axios** - HTTP client
 
 ### Machine Learning
-- Python ML libraries (TensorFlow, PyTorch, scikit-learn, etc.)
-- Model persistence and serving
+- **PyTorch / TensorFlow** - Deep learning framework
+- **Hugging Face Transformers** - Pre-trained models
+- **scikit-learn** - Machine learning utilities
+- **Pandas / NumPy** - Data processing
+- **Matplotlib / Seaborn** - Visualization
+
+### Data
+- Custom labeled dataset for fine-tuning
+- Fake vs. Authentic content samples
 
 ## 🚀 Getting Started
 
@@ -66,6 +91,7 @@ AI-HACKATON/
 - Python 3.8+
 - Node.js and npm
 - Git
+- GPU support (recommended for faster inference)
 
 ### Backend Setup
 
@@ -74,20 +100,31 @@ AI-HACKATON/
    cd back-end
    ```
 
-2. Install Python dependencies:
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Configure environment variables (create `.env` file):
+4. Configure environment variables:
    ```bash
    cp .env.example .env
+   # Edit .env with your configuration
    ```
 
-4. Run the development server:
+5. Start the backend server:
    ```bash
-   python manage.py runserver
+   python app.py
+   # or
+   uvicorn app:app --reload
    ```
+
+   The API will be available at `http://localhost:8000`
 
 ### Frontend Setup
 
@@ -108,7 +145,7 @@ AI-HACKATON/
 
 4. Open your browser to `http://localhost:5173`
 
-### Model Setup
+### Model Setup & Fine-Tuning
 
 1. Navigate to the model directory:
    ```bash
@@ -120,31 +157,115 @@ AI-HACKATON/
    pip install -r requirements.txt
    ```
 
-3. Train or load pre-trained models as needed
+3. Prepare your dataset:
+   ```bash
+   # Place your training data in data/
+   python scripts/prepare_dataset.py
+   ```
+
+4. Fine-tune the model:
+   ```bash
+   python scripts/finetune.py --model base-model-name --epochs 10
+   ```
+
+5. Evaluate the model:
+   ```bash
+   python scripts/evaluate.py --model checkpoints/best-model
+   ```
+
+## 🔬 How Fake Detection Works
+
+1. **Input**: User uploads content (image, text, audio, video, etc.)
+2. **Preprocessing**: Content is preprocessed and normalized
+3. **Model Inference**: Fine-tuned model analyzes the content
+4. **Classification**: Model outputs authenticity score and prediction
+5. **Results**: Frontend displays confidence level and detailed report
+6. **Output**: User receives verdict - Fake, Authentic, or Uncertain
+
+## 📊 Model Details
+
+### Base Model
+- Pre-trained transformer model (e.g., BERT, Vision Transformer, etc.)
+- Transfer learning approach for improved performance
+
+### Fine-Tuning Process
+- Trained on labeled dataset of fake and authentic content
+- Custom loss functions optimized for classification
+- Data augmentation techniques applied
+- Cross-validation for robust evaluation
+
+### Performance Metrics
+- Accuracy
+- Precision & Recall
+- F1-Score
+- ROC-AUC
 
 ## 📚 Documentation
 
-- See [back-end/README.md](./back-end/README.md) for backend-specific documentation
-- See [front/README.md](./front/README.md) for frontend-specific documentation
+- See [back-end/README.md](./back-end/README.md) for backend API documentation
+- See [front/README.md](./front/README.md) for frontend usage guide
+- See [model/README.md](./model/README.md) for model fine-tuning details (if exists)
 
-## 🔄 Workflow
+## 🔄 API Endpoints
 
-1. **Frontend** (React/Vite) sends requests to the **Backend** API
-2. **Backend** (Python/Laravel) processes requests and coordinates with ML models
-3. **Model** (Python ML) performs inference or training as requested
-4. **Backend** returns results to the **Frontend**
-5. **Frontend** displays results to the user
+### Detect Fake Content
+```
+POST /api/detect
+Content-Type: multipart/form-data
+
+Body:
+  - file: <uploaded file>
+  - content_type: "image" | "text" | "audio" | "video"
+
+Response:
+  {
+    "prediction": "fake" | "authentic" | "uncertain",
+    "confidence": 0.95,
+    "scores": {
+      "fake": 0.95,
+      "authentic": 0.05
+    },
+    "processing_time": 1.23
+  }
+```
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bug reports and feature requests.
+Contributions are welcome! Please follow these guidelines:
 
-### Development Guidelines
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Commit with clear messages (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
+### Code Standards
 - Follow PEP 8 for Python code
 - Use ESLint for JavaScript/React code
-- Write clear commit messages
-- Test your changes before submitting PRs
+- Write unit tests for new features
+- Document your changes
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd back-end
+pytest tests/
+```
+
+### Model Tests
+```bash
+cd model
+python -m pytest tests/
+```
+
+### Frontend Tests
+```bash
+cd front
+npm test
+```
 
 ## 📝 License
 
@@ -154,12 +275,22 @@ This project is open source and available under the MIT License.
 
 **indra100x** - Created for AI Hackathon 2025
 
+## 🎯 Future Enhancements
+
+- [ ] Multi-modal fake detection (image + text + audio)
+- [ ] Real-time video stream analysis
+- [ ] Browser extension for content verification
+- [ ] API rate limiting and authentication
+- [ ] Advanced analytics dashboard
+- [ ] Model ensemble for improved accuracy
+- [ ] Deployment to cloud platforms (AWS, GCP, Azure)
+
 ## 📞 Support
 
 For issues, questions, or suggestions, please open an issue on the GitHub repository.
 
 ---
 
-**Happy Hacking! 🎉**
+**Detect Fakes, Build Trust! 🛡️**
 
-Last Updated: November 2025
+Last Updated: September 2026
